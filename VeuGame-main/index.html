@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <!-- Font voor de titel en de tekst -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Externe CSS voor styling -->
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Vue.js wordt geladen via CDN -->
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47"></script>
+    <!-- Eigen JavaScript bestand -->
+    <script src="app.js" defer></script>
+  </head>
+
+  <body>
+    <header>
+      <!-- Titel van het spel -->
+      <h1>Monster Slayer!!!!</h1>
+    </header>
+    <div id="game">
+      <!-- Sectie voor de gezondheid van het monster -->
+      <section id="monster" class="container">
+        <h2>Monster Health</h2>
+        <div class="healthbar">
+          <!-- Gezondheid van het monster wordt dynamisch aangepast -->
+          <div class="healthbar__value" :style="monsterBarStyle"></div>
+        </div>
+      </section>
+      <!-- Sectie voor de gezondheid van de speler -->
+      <section id="player" class="container">
+        <h2>Your Health</h2>
+        <div class="healthbar">
+          <!-- Gezondheid van de speler wordt dynamisch aangepast -->
+          <div class="healthbar__value" :style="playerBarStyle"></div>
+        </div>
+      </section>
+      <!-- Game Over sectie, wordt alleen weergegeven als het spel is afgelopen -->
+      <section class="container" v-if="winner">
+        <h2>GAME OVER!</h2>
+        <!-- Weergave van de winnaar of als het gelijkspel is -->
+        <h3 v-if="winner === 'Player'">You Won!</h3>
+        <h3 v-else-if="winner === 'Monster'">You Lost!</h3>
+        <h3 v-else>It's a Draw</h3>
+        <!-- Knop om een nieuw spel te starten -->
+        <button @click="startGame">Start New Game</button>
+      </section>
+      <!-- Besturingselementen voor de speler om acties te ondernemen -->
+      <section id="controls" v-else>
+        <button @click="attackMonster">ATTACK</button>
+        <button :disabled="useSpecialAttack" @click="specialAttack">
+          SPECIAL ATTACK
+        </button>
+        <button @click="healPlayer">HEAL</button>
+        <button @click="surrender">SURRENDER</button>
+      </section>
+      <!-- Log van de acties in het spel -->
+      <section id="log" class="container">
+        <h2>Battle Log</h2>
+        <ul>
+          <li v-for="logMessage in logMessages">
+            <span
+              :class="{'log--player': logMessage.actionBy === 'Player', 'log--monster': logMessage.actionBy ==='Monster' }"
+              >{{ logMessage.actionBy === 'Player' ? 'Player' : 'Monster' }}
+            </span>
+            <!-- Informatie over de actie (aanval of genezing) -->
+            <span v-if="logMessage.actionType === 'Heal'">
+              Heals himself for
+              <span class="log--heal">{{ logMessage.actionValue }}</span></span
+            >
+            <span v-else>
+              Attacks and deals
+              <span class="log--damage">{{ logMessage.actionValue }}</span>
+            </span>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>
